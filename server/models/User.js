@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
     },
     gender: {
         type: String,
-        enum: ['Эркек', 'Аял'],
+        enum: ['Эркек', 'Аял', 'Уул', 'Кыз'],
         required: true
     },
     birthYear: {
