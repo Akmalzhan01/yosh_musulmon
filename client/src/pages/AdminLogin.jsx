@@ -22,7 +22,11 @@ const AdminLogin = () => {
                 setError('Туура эмес сыр сөз');
             }
         } catch (err) {
-            setError('Кирүүдө ката кетти');
+            if (err.response && err.response.status === 401) {
+                setError('Туура эмес сыр сөз');
+            } else {
+                setError('Кирүүдө ката кетти. Сервер уйкуда болушу мүмкүн (Render free tier), 1 мүнөт күтө туруңуз.');
+            }
         }
     };
 

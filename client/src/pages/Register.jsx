@@ -13,10 +13,10 @@ const Register = () => {
         firstName: '',
         lastName: '',
         phone: '',
-        gender: 'Эркек',
+        gender: 'Уул',
         birthYear: '2014',
         region: 'Ош',
-        participationLanguage: 'Өзбек тили'
+        participationLanguage: 'Кыргыз тили'
     });
     const [loading, setLoading] = useState(false);
     const [focusedField, setFocusedField] = useState(null);
@@ -108,10 +108,10 @@ const Register = () => {
                 firstName: '',
                 lastName: '',
                 phone: '',
-                gender: 'Эркек',
+                gender: 'Уул',
                 birthYear: '2014',
                 region: 'Ош',
-                participationLanguage: 'Өзбек тили'
+                participationLanguage: 'Кыргыз тили'
             });
         } catch (err) {
             console.error(err);
@@ -388,8 +388,8 @@ const Register = () => {
                                     onChange={handleChange}
                                     className="block w-full px-4 py-3 sm:px-5 sm:py-4 border-2 border-indigo-100 rounded-2xl shadow-sm focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 transition-all duration-300 text-base sm:text-lg font-medium bg-white"
                                 >
-                                    <option value="Эркек">👦 Эркек</option>
-                                    <option value="Аял">👧 Аял</option>
+                                    <option value="Уул">👦 Уул</option>
+                                    <option value="Кыз">👧 Кыз</option>
                                 </select>
                             </motion.div>
 
@@ -431,7 +431,6 @@ const Register = () => {
                                     <option value="Башка республика">🌍 Башка республика</option>
                                 </select>
                             </motion.div>
-
                             <motion.div variants={itemVariants}>
                                 <label htmlFor="participationLanguage" className="block text-sm font-bold text-gray-700 mb-1">
                                     Катышуу тили
@@ -443,11 +442,10 @@ const Register = () => {
                                     onChange={handleChange}
                                     className="block w-full px-4 py-3 sm:px-5 sm:py-4 border-2 border-indigo-100 rounded-2xl shadow-sm focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 transition-all duration-300 text-base sm:text-lg font-medium bg-white"
                                 >
-                                    <option value="Өзбек тили">🇺🇿 Өзбек тили</option>
-                                    <option value="Кыргыз тили">🇰🇬 Кыргыз тили</option>
+                                    <option value="Кыргыз тили">Кыргыз тили</option>
+                                    <option value="Өзбек тили">Өзбек тили</option>
                                 </select>
                             </motion.div>
-
                             <motion.div
                                 variants={itemVariants}
                                 onFocus={() => setFocusedField('phone')}
@@ -464,7 +462,7 @@ const Register = () => {
                                         value={formData.phone}
                                         onChange={handlePhoneChange}
                                         className="px-4 py-3 sm:px-5 sm:py-4"
-                                        inputClassName="bg-transparent outline-none w-full ml-2 text-base sm:text-lg font-medium placeholder-gray-400"
+                                        inputClassName="bg-transparent border-none outline-none shadow-none focus:outline-none focus:ring-0 w-full ml-2 text-base sm:text-lg font-medium placeholder-gray-400"
                                     />
                                 </div>
                             </motion.div>
