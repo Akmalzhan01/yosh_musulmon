@@ -1,8 +1,15 @@
+const mongoose = require('mongoose');
 const User = require('../models/User');
 
-// Register a new user
+const connectDB = async () => {
+    if (mongoose.connection.readyState >= 1) {
+        return;
+    }
+    return mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/karavan_ihlas_register');
+};
 exports.registerUser = async (req, res) => {
     try {
+        await connectDB();
         console.log('Register request body:', req.body);
         const { firstName, lastName, phone, gender, birthYear, region, participationLanguage } = req.body;
 
@@ -33,6 +40,7 @@ exports.registerUser = async (req, res) => {
 // Get all users (with search and pagination placeholder)
 exports.getUsers = async (req, res) => {
     try {
+        await connectDB();
         console.log('Get Users Query Params:', req.query);
         const { search, gender, region, birthYear, participationLanguage } = req.query;
         let query = {};
@@ -61,6 +69,7 @@ exports.getUsers = async (req, res) => {
 // Toggle arrived status
 exports.toggleArrived = async (req, res) => {
     try {
+        await connectDB();
         const { id } = req.params;
         const user = await User.findById(id);
 
@@ -99,6 +108,7 @@ exports.adminLogin = async (req, res) => {
 // Update user
 exports.updateUser = async (req, res) => {
     try {
+        await connectDB();
         const { id } = req.params;
         const updates = req.body;
 
@@ -118,6 +128,7 @@ exports.updateUser = async (req, res) => {
 // Delete user
 exports.deleteUser = async (req, res) => {
     try {
+        await connectDB();
         const { id } = req.params;
         console.log('Delete request for user:', id);
         const user = await User.findByIdAndDelete(id);
