@@ -5,7 +5,7 @@ const connectDB = async () => {
     if (mongoose.connection.readyState >= 1) {
         return;
     }
-    return mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/karavan_ihlas_register');
+    return mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://akmalzhantokhtasinov:ZVOGUMIY47Zn6OLY@cluster0.va4gnff.mongodb.net/karavan_ihlas_register?appName=Cluster0');
 };
 exports.registerUser = async (req, res) => {
     try {
