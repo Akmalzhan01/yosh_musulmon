@@ -404,7 +404,7 @@ const Register = () => {
                                     onChange={handleChange}
                                     className="block w-full px-4 py-3 sm:px-5 sm:py-4 border-2 border-indigo-100 rounded-2xl shadow-sm focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 transition-all duration-300 text-base sm:text-lg font-medium bg-white"
                                 >
-                                    {[2014, 2015, 2016, 2017, 2018, 2019].map(year => (
+                                    {[2013, 2014, 2015, 2016, 2017, 2018, 2019].map(year => (
                                         <option key={year} value={year}>{year}</option>
                                     ))}
                                 </select>
