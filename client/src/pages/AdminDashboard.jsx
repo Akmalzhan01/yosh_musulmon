@@ -197,7 +197,7 @@ const AdminDashboard = () => {
                             className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
                         >
                             <option value="all">Бардык жылаар</option>
-                            {[2014, 2015, 2016, 2017, 2018, 2019].map(year => (
+                            {[2013, 2014, 2015, 2016, 2017, 2018, 2019].map(year => (
                                 <option key={year} value={year}>{year}</option>
                             ))}
                         </select>
