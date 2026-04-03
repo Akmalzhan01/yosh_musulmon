@@ -15,8 +15,8 @@ const AdminLogin = () => {
         try {
             const response = await adminLogin(password);
             if (response.data.success) {
-                // Store token (simple implementation)
                 localStorage.setItem('adminToken', response.data.token);
+                localStorage.setItem('adminRole', response.data.role);
                 navigate('/admin');
             } else {
                 setError('Туура эмес сыр сөз');

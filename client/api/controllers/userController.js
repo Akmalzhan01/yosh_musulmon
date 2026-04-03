@@ -7,10 +7,14 @@ const connectDB = async () => {
     }
     return mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://akmalzhantokhtasinov_db_user:1234@cluster0.wuqxzpd.mongodb.net/karavan_ihlas_register?appName=Cluster0');
 };
+const getNextCompetitionId = async () => {
+    const last = await User.findOne({ competitionId: { $exists: true } }).sort({ competitionId: -1 });
+    return last ? last.competitionId + 1 : 1100;
+};
+
 exports.registerUser = async (req, res) => {
     try {
         await connectDB();
-        console.log('Register request body:', req.body);
         const { firstName, lastName, phone, gender, birthYear, region, participationLanguage } = req.body;
 
         const existingUser = await User.findOne({ phone });
@@ -18,7 +22,10 @@ exports.registerUser = async (req, res) => {
             return res.status(400).json({ message: 'Бул телефон номер мурун катталган.' });
         }
 
+        const competitionId = await getNextCompetitionId();
+
         const newUser = new User({
+            competitionId,
             firstName,
             lastName,
             phone,
@@ -96,8 +103,10 @@ exports.toggleArrived = async (req, res) => {
 exports.adminLogin = async (req, res) => {
     try {
         const { password } = req.body;
-        if (password === process.env.ADMIN_PASSWORD) {
-            res.json({ success: true, token: 'admin-token-secret' });
+        if (password === process.env.SUPERADMIN_PASSWORD) {
+            res.json({ success: true, token: 'admin-token-secret', role: 'superadmin' });
+        } else if (password === process.env.ADMIN_PASSWORD) {
+            res.json({ success: true, token: 'admin-token-secret', role: 'admin' });
         } else {
             res.status(401).json({ success: false, message: 'Noto\'g\'ri parol' });
         }
@@ -122,6 +131,75 @@ exports.updateUser = async (req, res) => {
     } catch (error) {
         console.error('Update user error:', error);
         res.status(500).json({ message: 'Server xatosi.' });
+    }
+};
+
+// Add or update etap score
+exports.updateScore = async (req, res) => {
+    try {
+        await connectDB();
+        const { id } = req.params;
+        const { etap, ball } = req.body;
+
+        const user = await User.findById(id);
+        if (!user) return res.status(404).json({ message: 'Foydalanuvchi topilmadi.' });
+
+        const existing = user.etapScores.find(s => s.etap === etap);
+        if (existing) {
+            existing.ball = ball;
+        } else {
+            user.etapScores.push({ etap, ball });
+        }
+
+        await user.save();
+        res.json({ message: 'Ball saqlandi', user });
+    } catch (error) {
+        console.error('Update score error:', error);
+        res.status(500).json({ message: 'Server xatosi.' });
+    }
+};
+
+// Delete etap score
+exports.deleteScore = async (req, res) => {
+    try {
+        await connectDB();
+        const { id, etap } = req.params;
+
+        const user = await User.findById(id);
+        if (!user) return res.status(404).json({ message: 'Foydalanuvchi topilmadi.' });
+
+        user.etapScores = user.etapScores.filter(s => s.etap !== parseInt(etap));
+        await user.save();
+        res.json({ message: 'Ball o\'chirildi', user });
+    } catch (error) {
+        res.status(500).json({ message: 'Server xatosi.' });
+    }
+};
+
+// Migrate: assign competitionId to existing users without one
+exports.migrateIds = async (req, res) => {
+    try {
+        await connectDB();
+        const users = await User.find({
+            $or: [{ competitionId: { $exists: false } }, { competitionId: null }]
+        }).sort({ registeredAt: 1 });
+
+        if (users.length === 0) return res.json({ message: 'Barcha userlarda ID bor', updated: 0 });
+
+        const agg = await User.aggregate([{ $group: { _id: null, maxId: { $max: '$competitionId' } } }]);
+        let nextId = (agg[0]?.maxId || 1099) + 1;
+
+        let updated = 0;
+        for (const user of users) {
+            await User.findByIdAndUpdate(user._id, { $set: { competitionId: nextId } });
+            nextId++;
+            updated++;
+        }
+
+        res.json({ message: `${updated} ta userga ID berildi` });
+    } catch (error) {
+        console.error('Migration error:', error);
+        res.status(500).json({ message: 'Server xatosi.', error: error.message });
     }
 };
 

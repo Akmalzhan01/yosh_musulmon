@@ -15,9 +15,11 @@ app.use(express.json());
 // Database connection is now handled per-route in userController.js
 
 const userRoutes = require('./routes/userRoutes');
+const settingsRoutes = require('./routes/settingsRoutes');
 
 // Routes Placeholder
 app.use('/api/users', userRoutes);
+app.use('/api/settings', settingsRoutes);
 
 app.get('/', (req, res) => {
     res.send('Karavan Ihlas Register API running');

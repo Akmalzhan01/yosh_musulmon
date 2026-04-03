@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
+    competitionId: {
+        type: Number,
+        unique: true,
+        sparse: true
+    },
     firstName: {
         type: String,
         required: true,
@@ -17,7 +22,7 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     birthYear: {
-        type: String, // Storing as string to match select value easily, or Number
+        type: String,
         required: true
     },
     region: {
@@ -44,7 +49,11 @@ const userSchema = new mongoose.Schema({
     },
     arrivedAt: {
         type: Date
-    }
+    },
+    etapScores: [{
+        etap: { type: Number, required: true },
+        ball: { type: Number, required: true }
+    }]
 });
 
 module.exports = mongoose.model('User', userSchema);

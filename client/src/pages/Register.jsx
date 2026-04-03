@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { registerUser } from '../lib/api';
+import { registerUser, getSettings } from '../lib/api';
 import { User, CheckCircle, AlertCircle, Star, Sparkles, Trophy, Rocket, BookOpen } from 'lucide-react';
 import 'react-phone-number-input/style.css';
 import PhoneInput from 'react-phone-number-input';
@@ -23,6 +23,15 @@ const Register = () => {
     const [whatsappJoined, setWhatsappJoined] = useState(false);
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState('');
+    const [registrationOpen, setRegistrationOpen] = useState(true);
+    const [settingsLoading, setSettingsLoading] = useState(true);
+
+    useEffect(() => {
+        getSettings()
+            .then(res => setRegistrationOpen(res.data.registrationOpen))
+            .catch(() => setRegistrationOpen(true))
+            .finally(() => setSettingsLoading(false));
+    }, []);
 
     // ... (existing code)
 
@@ -199,6 +208,44 @@ const Register = () => {
             </motion.div>
         </>
     );
+
+    if (!registrationOpen) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600 flex flex-col items-center justify-center p-6 text-center relative overflow-hidden">
+                <motion.div
+                    animate={{ y: [0, -20, 0], rotate: [0, 10, 0] }}
+                    transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+                    className="absolute top-20 left-10 text-yellow-300 opacity-60 pointer-events-none hidden sm:block"
+                >
+                    <Star size={48} fill="currentColor" />
+                </motion.div>
+                <motion.div
+                    animate={{ y: [0, 20, 0], rotate: [0, -10, 0] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                    className="absolute bottom-20 right-10 text-pink-300 opacity-60 pointer-events-none hidden sm:block"
+                >
+                    <Sparkles size={56} />
+                </motion.div>
+
+                <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: 'spring', stiffness: 120, damping: 14 }}
+                    className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 sm:p-12 max-w-md w-full border-4 border-white/50"
+                >
+                    <div className="text-6xl mb-6">🔒</div>
+                    <h1 className="text-2xl sm:text-3xl font-black text-gray-800 mb-3">
+                        Катталуу токтотулду
+                    </h1>
+                    <p className="text-gray-500 text-base sm:text-lg leading-relaxed">
+                        Азыр катталуу убактылуу токтотулган. <br />
+                        Кийинчерээк кайра аракет кылыңыз.
+                    </p>
+                    <div className="mt-8 w-16 h-1 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full mx-auto" />
+                </motion.div>
+            </div>
+        );
+    }
 
     if (success) {
         return (
