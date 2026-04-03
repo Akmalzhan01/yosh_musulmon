@@ -25,6 +25,16 @@ app.get('/', (req, res) => {
     res.send('Karavan Ihlas Register API running');
 });
 
+// Temporary debug — remove after fix
+app.get('/api/debug-env', (req, res) => {
+    res.json({
+        ADMIN_PASSWORD_set: !!process.env.ADMIN_PASSWORD,
+        SUPERADMIN_PASSWORD_set: !!process.env.SUPERADMIN_PASSWORD,
+        ADMIN_PASSWORD_len: process.env.ADMIN_PASSWORD?.length,
+        SUPERADMIN_PASSWORD_len: process.env.SUPERADMIN_PASSWORD?.length,
+    });
+});
+
 if (process.env.NODE_ENV !== 'production') {
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
