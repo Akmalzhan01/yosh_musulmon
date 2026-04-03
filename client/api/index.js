@@ -29,7 +29,7 @@ app.get('/', (req, res) => {
 app.get('/api/debug-env', (req, res) => {
     res.json({
         ADMIN_PASSWORD_set: !!process.env.ADMIN_PASSWORD,
-        SUPERADMIN_PASSWORD_set: !!process.env.SUPERADMIN_PASSWORD,
+        SUPERADMIN_PASSWORD_sett: !!process.env.SUPERADMIN_PASSWORD,
         ADMIN_PASSWORD_len: process.env.ADMIN_PASSWORD?.length,
         SUPERADMIN_PASSWORD_len: process.env.SUPERADMIN_PASSWORD?.length,
     });
