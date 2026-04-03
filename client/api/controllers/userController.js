@@ -203,6 +203,38 @@ exports.migrateIds = async (req, res) => {
     }
 };
 
+// Admin create user (bypasses registration toggle)
+exports.createUser = async (req, res) => {
+    try {
+        await connectDB();
+        const { firstName, lastName, phone, gender, birthYear, region, participationLanguage } = req.body;
+
+        const existingUser = await User.findOne({ phone });
+        if (existingUser) {
+            return res.status(400).json({ message: 'Бул телефон номер мурун катталган.' });
+        }
+
+        const competitionId = await getNextCompetitionId();
+
+        const newUser = new User({
+            competitionId,
+            firstName,
+            lastName,
+            phone,
+            gender,
+            birthYear,
+            region,
+            participationLanguage
+        });
+
+        await newUser.save();
+        res.status(201).json({ message: 'Катышуучу кошулду!', user: newUser });
+    } catch (error) {
+        console.error('Create user error:', error);
+        res.status(500).json({ message: 'Server xatosi.', error: error.message });
+    }
+};
+
 // Delete user
 exports.deleteUser = async (req, res) => {
     try {

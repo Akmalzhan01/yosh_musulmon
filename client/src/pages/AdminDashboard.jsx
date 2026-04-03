@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getUsers, toggleArrived, deleteUser, updateUser, migrateIds } from '../lib/api';
-import { Search, LogOut, RefreshCw, MapPin, Calendar, Languages, Filter, X, Trash2, Edit, Menu, Trophy, Settings } from 'lucide-react';
+import { getUsers, toggleArrived, deleteUser, updateUser, migrateIds, createUser } from '../lib/api';
+import { Search, LogOut, RefreshCw, MapPin, Calendar, Languages, Filter, X, Trash2, Edit, Menu, Trophy, Settings, UserPlus } from 'lucide-react';
 import EditUserModal from '../components/EditUserModal';
 import UserDetailModal from '../components/UserDetailModal';
+import AddUserModal from '../components/AddUserModal';
 
 const PAGE_SIZE = 50;
 
@@ -40,6 +41,9 @@ const AdminDashboard = () => {
     // Detail Modal State
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
     const [detailUser, setDetailUser] = useState(null);
+
+    // Add User Modal State
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
     // Mobile filter drawer
     const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -163,6 +167,11 @@ const AdminDashboard = () => {
         }
     };
 
+    const handleAddUser = async (formData) => {
+        const res = await createUser(formData);
+        setAllUsers([res.data.user, ...allUsers]);
+    };
+
     const clearFilters = () => {
         setSearchInput('');
         setSearch('');
@@ -250,6 +259,15 @@ const AdminDashboard = () => {
                     </span>
 
                     <div className="flex items-center gap-1 ml-auto shrink-0">
+                        {/* Add User button */}
+                        <button
+                            onClick={() => setIsAddModalOpen(true)}
+                            className="flex items-center gap-1 text-green-600 hover:text-green-700 transition p-2 rounded-lg hover:bg-green-50"
+                            title="Катышуучу кошуу"
+                        >
+                            <UserPlus className="h-5 w-5" />
+                        </button>
+
                         {/* Leaderboard button */}
                         <button
                             onClick={() => navigate('/admin/leaderboard')}
@@ -479,6 +497,13 @@ const AdminDashboard = () => {
                 )}
 
             </main>
+
+            {/* Add User Modal */}
+            <AddUserModal
+                isOpen={isAddModalOpen}
+                onClose={() => setIsAddModalOpen(false)}
+                onSave={handleAddUser}
+            />
 
             {/* Edit Modal */}
             <EditUserModal
