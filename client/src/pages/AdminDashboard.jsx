@@ -22,6 +22,7 @@ const AdminDashboard = () => {
     const [region, setRegion] = useState(savedFilters.region || 'all');
     const [birthYear, setBirthYear] = useState(savedFilters.birthYear || 'all');
     const [participationLanguage, setParticipationLanguage] = useState(savedFilters.participationLanguage || 'all');
+    const [arrivedFilter, setArrivedFilter] = useState(savedFilters.arrivedFilter || 'all');
 
     const debounceRef = useRef(null);
     const handleSearchChange = useCallback((e) => {
@@ -61,11 +62,11 @@ const AdminDashboard = () => {
 
     // Filterlarni localStorage ga saqlash
     useEffect(() => {
-        localStorage.setItem('adminFilters', JSON.stringify({ search: searchInput, gender, region, birthYear, participationLanguage }));
-    }, [searchInput, gender, region, birthYear, participationLanguage]);
+        localStorage.setItem('adminFilters', JSON.stringify({ search: searchInput, gender, region, birthYear, participationLanguage, arrivedFilter }));
+    }, [searchInput, gender, region, birthYear, participationLanguage, arrivedFilter]);
 
     // Filter o'zgarganda page ni reset qilish
-    useEffect(() => { setPage(1); }, [gender, region, birthYear, participationLanguage]);
+    useEffect(() => { setPage(1); }, [gender, region, birthYear, participationLanguage, arrivedFilter]);
 
     // Client-side filter — server ga murojaat qilmaydi
     const filteredUsers = useMemo(() => {
@@ -83,9 +84,11 @@ const AdminDashboard = () => {
             if (region !== 'all' && user.region !== region) return false;
             if (birthYear !== 'all' && String(user.birthYear) !== String(birthYear)) return false;
             if (participationLanguage !== 'all' && user.participationLanguage !== participationLanguage) return false;
+            if (arrivedFilter === 'arrived' && !user.arrived) return false;
+            if (arrivedFilter === 'notArrived' && user.arrived) return false;
             return true;
         });
-    }, [allUsers, search, gender, region, birthYear, participationLanguage]);
+    }, [allUsers, search, gender, region, birthYear, participationLanguage, arrivedFilter]);
 
     const totalPages = Math.ceil(filteredUsers.length / PAGE_SIZE);
     const users = useMemo(() => filteredUsers.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE), [filteredUsers, page]);
@@ -179,6 +182,7 @@ const AdminDashboard = () => {
         setRegion('all');
         setBirthYear('all');
         setParticipationLanguage('all');
+        setArrivedFilter('all');
         setPage(1);
         localStorage.removeItem('adminFilters');
     };
@@ -189,7 +193,7 @@ const AdminDashboard = () => {
         navigate('/admin/login');
     };
 
-    const hasActiveFilters = searchInput || gender !== 'all' || region !== 'all' || birthYear !== 'all' || participationLanguage !== 'all';
+    const hasActiveFilters = searchInput || gender !== 'all' || region !== 'all' || birthYear !== 'all' || participationLanguage !== 'all' || arrivedFilter !== 'all';
 
     const filterSelects = (
         <>
@@ -223,6 +227,12 @@ const AdminDashboard = () => {
                 <option value="all">Бардык тилдер</option>
                 <option value="Өзбек тили">Өзбек тили</option>
                 <option value="Кыргыз тили">Кыргыз тили</option>
+            </select>
+            <select value={arrivedFilter} onChange={(e) => setArrivedFilter(e.target.value)}
+                className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                <option value="all">Баары (Келди/Кelmedi)</option>
+                <option value="arrived">Келди ✓</option>
+                <option value="notArrived">Келмеди ✗</option>
             </select>
         </>
     );
@@ -350,7 +360,7 @@ const AdminDashboard = () => {
                             </button>
                         )}
                     </div>
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                    <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
                         {filterSelects}
                     </div>
                 </div>
@@ -362,6 +372,8 @@ const AdminDashboard = () => {
                         {birthYear !== 'all' && <span className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full">{birthYear}</span>}
                         {region !== 'all' && <span className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full">{region}</span>}
                         {participationLanguage !== 'all' && <span className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full">{participationLanguage}</span>}
+                        {arrivedFilter === 'arrived' && <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">Келди ✓</span>}
+                        {arrivedFilter === 'notArrived' && <span className="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-full">Келмеди ✗</span>}
                         <button onClick={clearFilters} className="text-xs text-red-500 underline">Тазалоо</button>
                     </div>
                 )}
